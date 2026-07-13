@@ -26,7 +26,7 @@ export default function Sidebar() {
 
           <li>
             <Link
-              href="/documents"
+              href="/dashboard/document"
               className="block rounded-lg px-4 py-3 text-gray-700 transition hover:bg-slate-100 hover:text-blue-600"
             >
               My Documents
