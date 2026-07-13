@@ -38,7 +38,7 @@ export const login = async (request: Request) => {
     });
 
     if (result.success && result.token) {
-      response.cookies.set("token", result.token, {
+      response.cookies.set("auth_token", result.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",

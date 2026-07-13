@@ -11,3 +11,9 @@ export interface UserFormErrors {
   password?: string;
   confirmPassword?: string;
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
