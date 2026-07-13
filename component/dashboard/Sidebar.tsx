@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 border-r bg-white">
+    <aside className="w-64 h-full border-r bg-white">
       <div className="p-6">
         <h2 className="text-2xl font-bold text-blue-600">
           LiveDocs

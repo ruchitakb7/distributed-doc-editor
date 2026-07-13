@@ -52,13 +52,13 @@ export default function MyDocumentsPage() {
 
         <main className="flex-1 p-8">
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold">My Documents</h1>
+            <h1 className="text-3xl font-bold text-slate-900">My Documents</h1>
           </div>
 
           {documents.length === 0 ? (
             <div className="border rounded-lg p-10 text-center bg-white shadow-sm">
-              <h2 className="text-xl font-semibold">No documents found</h2>
-              <p className="text-gray-500 mt-2">
+              <h2 className="text-xl font-semibold text-slate-900">No documents found</h2>
+              <p className="text-slate-600 mt-2">
                 Create your first document to get started.
               </p>
             </div>
@@ -67,11 +67,11 @@ export default function MyDocumentsPage() {
               {documents.map((doc) => (
                 <div
                   key={doc._id}
-                  onClick={() => router.push(`/documents/${doc._id}`)}
+                  onClick={() => router.push(`/dashboard/${doc._id}`)}
                   className="border rounded-xl p-5 cursor-pointer hover:shadow-lg transition bg-white"
                 >
-                  <h2 className="text-lg font-semibold">{doc.title}</h2>
-                  <p className="text-sm text-gray-500 mt-3">
+                  <h2 className="text-lg font-semibold text-slate-900">{doc.title}</h2>
+                  <p className="text-sm text-slate-600 mt-3">
                     Created: {new Date(doc.createdAt).toLocaleDateString()}
                   </p>
                 </div>

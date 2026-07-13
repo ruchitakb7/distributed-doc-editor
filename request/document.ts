@@ -46,3 +46,24 @@ export const getMyDocuments = async () => {
     throw error;
   }
 };
+
+
+export const getDocumentById = async (documentId: string) => {
+  try {
+    const response = await fetch(`/api/document/${documentId}`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch document.");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching document:", error);
+    throw error;
+  }
+};

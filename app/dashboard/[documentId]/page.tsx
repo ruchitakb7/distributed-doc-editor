@@ -1,28 +1,94 @@
-// export default async function DocumentPage({ params }: { params: { documentId: string } }) {
-//   const { documentId } = await params;
 
+
+
+// import DocumentHeader from "@/component/document/documentheader";
+// import DocumentEditor from "@/component/document/documneteditore";
+// import Sidebar from "@/component/dashboard/Sidebar";
+
+// export default function DocumentPage() {
 //   return (
-//     <div className="p-8">
-//       <h1>Document Editor</h1>
+//     <div className="h-[calc(100vh-64px)] bg-slate-50 overflow-hidden">
+//       <div className="flex h-full">
+//         <div className="h-full sticky top-0">
+//           <Sidebar />
+//         </div>
 
-//       <p>Document Id: {documentId}</p>
+//         <main className="flex-1 flex flex-col overflow-hidden">
+//           <DocumentHeader title="Untitled Document" />
+//           <div className="flex-1 overflow-auto p-6">
+//             <DocumentEditor />
+//           </div>
+//         </main>
+//       </div>
 //     </div>
 //   );
 // }
 
 
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+
+import Sidebar from "@/component/dashboard/Sidebar";
 import DocumentHeader from "@/component/document/documentheader";
-import DocumentTitle from "@/component/document/documentTitle";
-import DocumentToolbar from "@/component/document/documenttoolbar";
 import DocumentEditor from "@/component/document/documneteditore";
+import { getDocumentById } from "@/request/document";
 
 export default function DocumentPage() {
+  const { documentId } = useParams();
+
+  const [document, setDocument] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDocument = async () => {
+      try {
+        const response = await getDocumentById(documentId as string);
+        console.log(response, "response");
+
+        if (response.success) {
+          setDocument(response.document);
+        }
+      } catch (error) {
+        console.error("Error fetching document:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (documentId) {
+      fetchDocument();
+    }
+  }, [documentId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-64px)]">
+        Loading...
+      </div>
+    );
+  }
+
   return (
-    <>
-      <DocumentHeader />
-      <DocumentTitle />
-      <DocumentToolbar />
-      <DocumentEditor />
-    </>
+    <div className="h-[calc(100vh-64px)] bg-slate-50 overflow-hidden">
+      <div className="flex h-full">
+        <div className="h-full sticky top-0">
+          <Sidebar />
+        </div>
+
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <DocumentHeader
+            document={document}
+          />
+
+          <div className="flex-1 overflow-auto p-6">
+            <DocumentEditor
+              document={document}
+            />
+          </div>
+        </main>
+      </div>
+    </div>
   );
 }

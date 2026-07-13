@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createDocument, getDocumentsByOwner } from "@/services/Documentservice";
+import { createDocument, getDocumentsByOwner,updateDocument,getDocumentById } from "@/services/Documentservice";
 
 import { authenticateUser } from "@/services/Authentication";
 
@@ -95,5 +95,96 @@ export const getByOwner = async (request: Request) => {
   }
 };
 
+
+
+export const updateDocumentController = async (
+  req: Request,
+  documentId: string
+) => {
+  try {
+    const body = await req.json();
+    const { title, content } = body;
+
+    const document = await updateDocument({
+      documentId,
+      title,
+      content,
+    });
+
+    if (!document) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Document not found.",
+        },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Document updated successfully.",
+        document,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating document:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Internal server error.",
+      },
+      { status: 500 }
+    );
+  }
+};
+
+
+
+export const getDocumentByIdController = async (
+  request: Request,
+  documentId: string
+) => {
+  try {
+    const document = await getDocumentById(documentId);
+
+    if (!document) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Document not found.",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        document,
+      },
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Something went wrong.",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+};
 
 
