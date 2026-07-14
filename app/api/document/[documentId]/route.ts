@@ -1,6 +1,7 @@
 import { getDocumentByIdController, updateDocumentController } from "@/controller/Documentcontroller";
 
 import connectDB from "@/lib/mongodb";
+import { NextRequest } from "next/dist/server/web/spec-extension/request";
 
 export async function GET(
   request: Request,
@@ -13,7 +14,7 @@ export async function GET(
   return getDocumentByIdController(request, documentId);
 }
 
-export async function PUT(
+export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ documentId: string }> }
 ) {
@@ -23,3 +24,4 @@ export async function PUT(
 
   return updateDocumentController(request, documentId);
 }
+

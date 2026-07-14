@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createDocument, getDocumentsByOwner,updateDocument,getDocumentById } from "@/services/Documentservice";
+import { createDocument, getDocumentsByOwner, updateDocument,getDocumentById, shareDocumentService, getSharedDocuments } from "@/services/Documentservice";
 
 import { authenticateUser } from "@/services/Authentication";
 
@@ -102,8 +102,17 @@ export const updateDocumentController = async (
   documentId: string
 ) => {
   try {
-    const body = await req.json();
-    const { title, content } = body;
+    const { title, content } = await req.json();
+
+    if (title === undefined && content === undefined) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Nothing to update.",
+        },
+        { status: 400 }
+      );
+    }
 
     const document = await updateDocument({
       documentId,
@@ -188,3 +197,75 @@ export const getDocumentByIdController = async (
 };
 
 
+export const shareDocumentController = async (req: Request) => {
+  try {
+    const { documentId, email, role } = await req.json();
+
+    if (!documentId || !email || !role) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Document ID, email and role are required.",
+        },
+        { status: 400 }
+      );
+    }
+
+      const user = await authenticateUser();
+
+    const result = await shareDocumentService({
+      ownerId: user.id,
+      ownerName: user.name,
+      documentId,
+      email,
+      role,
+    });
+
+    return NextResponse.json(result, {
+      status: 200,
+    });
+  } catch (error: any) {
+    console.error("Error sharing document:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message || "Internal server error.",
+      },
+      {
+        status: error.status || 500,
+      }
+    );
+  }
+};
+
+
+export const getSharedDocumentsController = async (
+
+) => {
+  try {
+    const documents = await getSharedDocuments();
+
+    return NextResponse.json(
+      {
+        success: true,
+        documents,
+      },
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Internal server error.",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+};

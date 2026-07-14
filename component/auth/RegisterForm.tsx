@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/component/ui/input";
 import { Button } from "@/component/ui/button";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { validateUser } from "@/validation/validation";
 import { UserFormData, UserFormErrors } from "@/types/user.types";
 import { registerUser } from "@/request/auth";
@@ -16,7 +17,7 @@ type StatusType = {
 };
 
 export default function RegisterForm() {
-
+    const router = useRouter();
     const [formData, setFormData] = useState<UserFormData>({
         name: "",
         email: "",
@@ -65,7 +66,17 @@ export default function RegisterForm() {
             }
 
             setStatus({ variant: "success", message: response.data.message });
-            console.log(response.data);
+
+            setFormData({
+                name: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
+            });
+
+            setErrors({});
+
+            router.push("/");
         } finally {
             setLoading(false);
         }

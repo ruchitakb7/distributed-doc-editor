@@ -35,7 +35,7 @@ export default function Sidebar() {
 
           <li>
             <Link
-              href="/shared"
+              href="/dashboard/sharedocument"
               className="block rounded-lg px-4 py-3 text-gray-700 transition hover:bg-slate-100 hover:text-blue-600"
             >
               Shared With Me
