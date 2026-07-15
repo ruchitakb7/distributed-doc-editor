@@ -42,23 +42,23 @@ export default function Sidebar() {
             </Link>
           </li>
 
-          <li>
+          {/* <li>
             <Link
               href="/starred"
               className="block rounded-lg px-4 py-3 text-gray-700 transition hover:bg-slate-100 hover:text-blue-600"
             >
               Starred
             </Link>
-          </li>
+          </li> */}
 
-          <li>
+          {/* <li>
             <Link
               href="/trash"
               className="block rounded-lg px-4 py-3 text-gray-700 transition hover:bg-slate-100 hover:text-blue-600"
             >
               Trash
             </Link>
-          </li>
+          </li> */}
 
           <li>
             <Link
