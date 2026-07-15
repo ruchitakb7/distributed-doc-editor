@@ -7,10 +7,12 @@ export interface IDocument extends Document {
   collaborators: {
     user: mongoose.Types.ObjectId;
     role: "editor" | "viewer";
-     addedAt: Date;
+    addedAt: Date;
   }[];
   createdAt: Date;
   updatedAt: Date;
+  isDeleted: boolean;
+  deletedAt: Date | null;
 }
 
 const collaboratorSchema = new Schema(
@@ -25,7 +27,7 @@ const collaboratorSchema = new Schema(
       enum: ["editor", "viewer"],
       default: "viewer",
     },
-     addedAt: {
+    addedAt: {
       type: Date,
       default: Date.now,
     },
@@ -59,11 +61,20 @@ const documentSchema = new Schema<IDocument>(
       type: [collaboratorSchema],
       default: [],
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-export default mongoose.models.Document ||
-  mongoose.model<IDocument>("Document", documentSchema);
+export default mongoose.models.NewDocument ||
+  mongoose.model<IDocument>("NewDocument", documentSchema);

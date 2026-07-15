@@ -182,7 +182,7 @@ export default function DocumentEditor({
                   title={label}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => exec(cmd, value)}
-                  disabled={isReadOnly}
+                  disabled={isReadOnly|| doc?.isDeleted}
                   className="grid h-8 w-8 place-items-center rounded-md text-gray-400 transition-colors hover:bg-accent hover:text-foreground disabled:opacity-40"
                 >
                   <Icon className="h-4 w-4" strokeWidth={2} />
@@ -202,7 +202,7 @@ export default function DocumentEditor({
           <div className="mx-auto max-w-2xl">
             <div
               ref={editorRef}
-              contentEditable={!isReadOnly}
+              contentEditable={!isReadOnly && !doc?.isDeleted}
               suppressContentEditableWarning
               onInput={handleInput}
               spellCheck={false}

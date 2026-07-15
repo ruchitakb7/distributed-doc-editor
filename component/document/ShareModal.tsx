@@ -140,7 +140,7 @@ export default function ShareModal({
 
           <div className="flex justify-end gap-3 pt-2">
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={() => onOpenChange(false)}
               className="rounded-full"
             >

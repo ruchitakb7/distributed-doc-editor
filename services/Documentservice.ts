@@ -17,30 +17,6 @@ interface CreateDocumentPayload {
   owner: string;
 }
 
-export const createDocument = async ({
-  owner,
-}: CreateDocumentPayload) => {
-  const document = await DocumentModel.create({
-    title: "Untitled Document",
-    owner,
-  });
-
-  return document;
-};
-
-
-
-export const getDocumentsByOwner = async (
-  owner: string
-) => {
-  const documents = await DocumentModel.find({
-    owner,
-  }).sort({ createdAt: -1 });
-
-  return documents;
-};
-
-
 interface Collaborator {
   user: string;
   role: "editor" | "viewer";
@@ -52,6 +28,34 @@ interface UpdateDocumentPayload {
   content?: string;
   collaborators?: Collaborator[];
 }
+
+
+export const createDocument = async ({
+  owner,
+}: CreateDocumentPayload) => {
+  const document = await DocumentModel.create({
+    title: "Untitled Document",
+    owner,
+  });
+
+  console.log(document);
+
+  return document;
+};
+
+
+
+export const getDocumentsByOwner = async (
+  owner: string
+) => {
+  const documents = await DocumentModel.find({
+    owner,
+    isDeleted: false,
+  }).sort({ createdAt: -1 });
+
+  return documents;
+};
+
 
 export const updateDocument = async ({
   documentId,
@@ -69,9 +73,9 @@ export const updateDocument = async ({
     updateData.content = content;
   }
 
-//   if (collaborators !== undefined) {
-//     updateData.collaborators = collaborators;
-//   }
+  //   if (collaborators !== undefined) {
+  //     updateData.collaborators = collaborators;
+  //   }
 
   const document = await DocumentModel.findByIdAndUpdate(
     documentId,
@@ -148,7 +152,7 @@ export const shareDocumentService = async ({
 
   // Check if already a collaborator
   const alreadyCollaborator = document.collaborators.some(
-    (item:any) => item.user.toString() === collaborator._id.toString()
+    (item: any) => item.user.toString() === collaborator._id.toString()
   );
 
   if (alreadyCollaborator) {
@@ -199,9 +203,86 @@ export const getSharedDocuments = async () => {
 
   const documents = await DocumentModel.find({
     "collaborators.user": user._id,
+    isDeleted: false,
   })
     .populate("owner", "name email")
     .sort({ updatedAt: -1 });
+
+  return documents;
+};
+
+export const toggleDocumentTrashStatus = async (
+  documentId: string,
+  userId: string
+) => {
+  const document = await DocumentModel.findById(documentId);
+
+  if (!document) {
+    throw new Error("Document not found");
+  }
+
+  if (document.owner.toString() !== userId) {
+    throw new Error("Only owner can perform this action");
+  }
+
+  document.isDeleted = !document.isDeleted;
+  document.deletedAt = document.isDeleted ? new Date() : null;
+
+  await document.save();
+
+  return document;
+};
+
+
+export const getTrashedDocumentsService = async () => {
+  const user = await authenticateUser();
+
+  const documents = await DocumentModel.find({
+    owner: user._id,
+    isDeleted: true,
+  })
+    .sort({ updatedAt: -1 })
+    .lean();
+
+  return documents;
+};
+
+export const permanentlyDeleteDocumentService = async (
+  documentId: string
+) => {
+  const user = await authenticateUser();
+
+  const document = await DocumentModel.findOne({
+    _id: documentId,
+    owner: user._id,
+    isDeleted: true,
+  });
+
+  if (!document) {
+    throw new Error("Document not found.");
+  }
+
+  await DocumentModel.findByIdAndDelete(documentId);
+
+  return;
+};
+
+
+export const getRecentDocumentsService = async (userId: string) => {
+  const twoDaysAgo = new Date();
+  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+  const documents = await DocumentModel.find({
+    isDeleted: false,
+    updatedAt: { $gte: twoDaysAgo },
+    $or: [
+      { owner: userId },
+      { "collaborators.user": userId },
+    ],
+  })
+    .populate("owner", "name email")
+    .sort({ updatedAt: -1 })
+    .limit(6);
 
   return documents;
 };

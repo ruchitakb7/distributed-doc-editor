@@ -147,3 +147,81 @@ export const getSharedDocuments = async () => {
     throw error;
   }
 };
+
+
+
+
+export const deleteDocument = async (documentId: string) => {
+  const response = await fetch(`/api/document/${documentId}/trash`, {
+    method: "PATCH",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to delete document");
+  }
+
+  return data;
+};
+
+
+export const getTrashedDocuments = async () => {
+  try {
+    const response = await fetch("/api/document/trash", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to fetch trashed documents.");
+    }
+
+    return result;
+  } catch (error: any) {
+    throw new Error(error.message || "Something went wrong.");
+  }
+};
+
+export const permanentlyDeleteDocument = async (documentId: string) => {
+  try {
+    const response = await fetch(`/api/document/${documentId}/trash`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to delete document.");
+    }
+
+    return result;
+  } catch (error: any) {
+    throw new Error(error.message || "Something went wrong.");
+  }
+};
+
+
+export const getRecentDocuments = async () => {
+  try {
+    const response = await fetch("/api/document/recent", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.error("Get Recent Documents Error:", error);
+
+    return {
+      success: false,
+      message: "Something went wrong.",
+    };
+  }
+};

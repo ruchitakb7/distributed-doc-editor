@@ -68,11 +68,11 @@ export function DialogHeader({ children, className }: { children?: React.ReactNo
 }
 
 export function DialogTitle({ children, className }: { children?: React.ReactNode; className?: string }) {
-  return <div className={cn("text-lg font-semibold text-grey-800", className)}>{children}</div>;
+  return <div className={cn("text-lg font-semibold text-gray-800", className)}>{children}</div>;
 }
 
 export function DialogDescription({ children, className }: { children?: React.ReactNode; className?: string }) {
-  return <div className={cn("text-sm text-grey-600", className)}>{children}</div>;
+  return <div className={cn("text-sm text-gray-600", className)}>{children}</div>;
 }
 
 export function DialogFooter({ children, className }: { children?: React.ReactNode; className?: string }) {

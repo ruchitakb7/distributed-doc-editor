@@ -25,3 +25,4 @@ export async function PATCH(
   return updateDocumentController(request, documentId);
 }
 
+

@@ -72,6 +72,8 @@ export default function DocumentHeader({
     lastSavedTitle.current = document?.title || "";
   }, [document._id]);
 
+ 
+
   useEffect(() => {
     if (!document?._id) return;
 
@@ -123,7 +125,7 @@ export default function DocumentHeader({
           <input
             value={document?.title ?? ""}
             onChange={handleTitleChange}
-            readOnly={isReadOnly}
+            readOnly={isReadOnly || document?.isDeleted}
             placeholder="Untitled document"
             className="w-full bg-transparent font-serif text-4xl leading-tight text-gray-800 outline-none placeholder:text-muted-foreground/50 focus:outline-none md:text-5xl"
           />
@@ -166,6 +168,7 @@ export default function DocumentHeader({
 
           <Button
             onClick={() => setShareOpen(true)}
+            disabled={isReadOnly || document?.isDeleted}
             className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background transition-transform hover:-translate-y-0.5 hover:bg-foreground"
           >
             <Share2 className="h-4 w-4" />

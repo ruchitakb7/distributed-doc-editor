@@ -13,6 +13,7 @@ const NAV = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "My Documents", href: "/dashboard/document" },
   { label: "Shared Documents", href: "/dashboard/sharedocument" },
+  { label: "Trash Documents", href: "/dashboard/trashdocument" },
   { label: "About", href: "/about" },
 ];
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createDocument, getDocumentsByOwner, updateDocument,getDocumentById, shareDocumentService, getSharedDocuments } from "@/services/Documentservice";
+import { createDocument, getDocumentsByOwner, updateDocument,getDocumentById, getTrashedDocumentsService, getRecentDocumentsService,
+  shareDocumentService, getSharedDocuments , toggleDocumentTrashStatus, permanentlyDeleteDocumentService } from "@/services/Documentservice";
 
 import { authenticateUser } from "@/services/Authentication";
 
@@ -266,6 +267,142 @@ export const getSharedDocumentsController = async (
       {
         status: 500,
       }
+    );
+  }
+};
+
+export const toggleDocumentTrashController = async (
+  request: Request,
+  documentId: string
+) => {
+  try {
+    const user = await authenticateUser();
+
+    const document = await toggleDocumentTrashStatus(
+      documentId,
+      user._id.toString()
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: document.isDeleted
+        ? "Document moved to Trash successfully."
+        : "Document restored successfully.",
+      document,
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message || "Something went wrong",
+      },
+      {
+        status:
+          error.message === "Document not found"
+            ? 404
+            : error.message === "Only owner can perform this action"
+            ? 403
+            : 500,
+      }
+    );
+  }
+};
+
+
+
+export const getTrashedDocumentsController = async () => {
+  try {
+    const documents = await getTrashedDocumentsService();
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Trashed documents fetched successfully.",
+        documents: documents,
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message || "Failed to fetch trashed documents.",
+      },
+      { status: 500 }
+    );
+  }
+};
+
+
+export const permanentlyDeleteDocumentController = async (
+  { params }: { params: Promise<{ documentId: string }> }
+) => {
+  try {
+    const { documentId } = await params;
+
+    await permanentlyDeleteDocumentService(documentId);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Document permanently deleted successfully.",
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message || "Failed to permanently delete document.",
+      },
+      { status: 500 }
+    );
+  }
+};
+
+
+export const getRecentDocumentsController = async (request: Request) => {
+  try {
+    if (request.method !== "GET") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Method not allowed.",
+        },
+        { status: 405 }
+      );
+    }
+
+    const user = await authenticateUser();
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized.",
+        },
+        { status: 401 }
+      );
+    }
+
+    const documents = await getRecentDocumentsService(user.id);
+
+    return NextResponse.json(
+      {
+        success: true,
+        documents,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Something went wrong.",
+      },
+      { status: 500 }
     );
   }
 };
