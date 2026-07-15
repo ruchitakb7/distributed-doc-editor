@@ -5,10 +5,16 @@ export default function RecentDocuments() {
   const documents: any[] = [];
 
   return (
-    <div className="rounded-xl border bg-white p-6 shadow-sm">
-      <h2 className="mb-6 text-xl font-semibold">
-        Recent Documents
-      </h2>
+    <section className="rounded-xl border border-gray-200 bg-white p-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-serif text-[#222]">
+          Recent Documents
+        </h2>
+
+        <p className="mt-1 text-sm text-gray-500">
+          Quickly access the documents you've worked on recently.
+        </p>
+      </div>
 
       {documents.length === 0 ? (
         <EmptyState />
@@ -22,6 +28,6 @@ export default function RecentDocuments() {
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }

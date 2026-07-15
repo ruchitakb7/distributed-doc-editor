@@ -6,7 +6,7 @@ import RecentDocuments from "./Recentdocument";
 export default function DashboardLayout() {
   return (
     <div className="flex min-h-[calc(100vh-64px)]">
-      <Sidebar />
+      {/* <Sidebar /> */}
 
       <main className="flex-1 p-8">
         <DashboardHeader />

@@ -6,3 +6,4 @@ export * from "./alert";
 export * from "./dialog";
 export * from "./label";
 export * from "./select";
+export * from "./dropdown-menu";

@@ -86,9 +86,9 @@ useEffect(() => {
     return (
         <div className="h-[calc(100vh-64px)] bg-slate-50 overflow-hidden">
             <div className="flex h-full">
-                <div className="h-full sticky top-0">
+                {/* <div className="h-full sticky top-0">
                     <Sidebar />
-                </div>
+                </div> */}
 
                 <main className="flex-1 flex flex-col overflow-hidden">
                     <DocumentHeader

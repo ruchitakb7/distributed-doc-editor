@@ -77,20 +77,20 @@ const benefits = [
 
 export default function AboutPage() {
   return (
-    <main className="bg-slate-50">
+    <main className="bg-[#f8f8f8]">
       {/* Hero */}
-      <section className="border-b bg-white">
+      <section className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-20">
           <div className="max-w-3xl">
-            <span className="rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-700">
+            <span className="inline-flex rounded-full border border-gray-200 bg-gray-100 px-4 py-1 text-sm font-medium text-gray-700">
               Distributed Document Editor
             </span>
 
-            <h1 className="mt-6 text-5xl font-bold tracking-tight text-slate-900">
+            <h1 className="mt-6 text-5xl font-serif text-[#222]">
               Collaborate Without Limits
             </h1>
 
-            <p className="mt-6 text-lg leading-8 text-slate-600">
+            <p className="mt-6 text-lg leading-8 text-gray-500">
               Create, edit, and share documents with your team in real time.
               Whether you're working on notes, reports, or project
               documentation, everyone stays synchronized with automatic saving
@@ -100,7 +100,7 @@ export default function AboutPage() {
             <div className="mt-8 flex gap-4">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
+                className="inline-flex items-center rounded-full bg-black px-6 py-3 font-medium text-white transition hover:bg-gray-800"
               >
                 Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -113,11 +113,11 @@ export default function AboutPage() {
       {/* Features */}
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-slate-900">
+          <h2 className="text-4xl font-serif text-[#222]">
             Everything You Need
           </h2>
 
-          <p className="mt-3 text-slate-600">
+          <p className="mt-3 text-gray-500">
             Powerful features designed to make document collaboration simple,
             secure, and efficient.
           </p>
@@ -130,17 +130,17 @@ export default function AboutPage() {
             return (
               <div
                 key={feature.title}
-                className="rounded-2xl border bg-white p-6 transition text-black hover:-translate-y-1 hover:shadow-lg"
+                className="rounded-xl border border-gray-200 bg-white p-6 text-black transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-                  <Icon className="h-6 w-6 text-blue-600" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100">
+                  <Icon className="h-6 w-6 text-gray-700" />
                 </div>
 
-                <h3 className="mt-5 text-lg font-semibold">
+                <h3 className="mt-5 text-xl font-semibold text-[#222]">
                   {feature.title}
                 </h3>
 
-                <p className="mt-3 text-sm leading-6 text-slate-600">
+                <p className="mt-3 text-sm leading-6 text-gray-500">
                   {feature.description}
                 </p>
               </div>
@@ -153,11 +153,11 @@ export default function AboutPage() {
       <section className="bg-white py-20">
         <div className="mx-auto grid max-w-7xl gap-16 px-6 lg:grid-cols-2">
           <div>
-            <h2 className="text-3xl font-bold text-black">
+            <h2 className="text-4xl font-serif text-[#222]">
               Why Choose This Platform?
             </h2>
 
-            <p className="mt-4 text-slate-600 leading-7">
+            <p className="mt-4 leading-7 text-gray-500">
               Built to simplify teamwork, our platform provides everything you
               need for creating, editing, and managing documents with your team
               in one place.
@@ -167,25 +167,25 @@ export default function AboutPage() {
               {benefits.map((item) => (
                 <div key={item} className="flex items-center gap-3">
                   <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <span className="text-black">{item}</span>
+                  <span className="text-[#222]">{item}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-3xl bg-blue-600 p-10 text-white">
-            <h3 className="text-3xl font-bold">
+          <div className="rounded-2xl bg-[#222] p-10 text-white">
+            <h3 className="text-3xl font-serif">
               Built for Better Collaboration
             </h3>
 
-            <p className="mt-6 leading-8 text-blue-100">
+            <p className="mt-6 leading-8 text-gray-300">
               Whether you're working on college assignments, project
               documentation, meeting notes, or team reports, our platform helps
               everyone stay connected through real-time collaboration, automatic
               saving, secure sharing, and version tracking.
             </p>
 
-            <div className="mt-10 rounded-xl bg-white/10 p-5">
+            <div className="mt-10 rounded-xl bg-white/5 p-5">
               <p className="font-semibold">
                 ✔ Collaborate in real time
               </p>
@@ -208,19 +208,19 @@ export default function AboutPage() {
 
       {/* CTA */}
       <section className="py-20">
-        <div className="mx-auto max-w-5xl rounded-3xl bg-slate-900 px-8 py-16 text-center text-white">
-          <h2 className="text-4xl font-bold">
+        <div className="mx-auto max-w-5xl rounded-2xl bg-[#222] px-8 py-16 text-center text-white">
+          <h2 className="text-4xl font-serif">
             Start Collaborating Today
           </h2>
 
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
+          <p className="mx-auto mt-4 max-w-2xl text-gray-300">
             Create, edit, and share documents effortlessly with your team—all
             from one secure and collaborative workspace.
           </p>
 
           <Link
             href="/dashboard"
-            className="mt-8 inline-flex items-center rounded-lg bg-white px-6 py-3 font-semibold text-slate-900 transition hover:bg-slate-200"
+            className="mt-8 inline-flex items-center rounded-full bg-white px-6 py-3 font-semibold text-[#222] transition hover:bg-gray-200"
           >
             Go to Dashboard
             <ArrowRight className="ml-2 h-5 w-5" />
