@@ -2,19 +2,57 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
 
 import Sidebar from "@/component/dashboard/Sidebar";
 import DocumentHeader from "@/component/document/documentheader";
 import DocumentEditor from "@/component/document/documneteditore";
 import { getDocumentById } from "@/request/document";
+import socket from "@/lib/socket";
 
 export default function DocumentPage() {
     const { documentId } = useParams();
 
     const [document, setDocument] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+
+    const isRemoteUpdate = useRef(false);
+
+    const handleDocumentChange = (content: string) => {
+        isRemoteUpdate.current = true;
+
+        setDocument((prev: any) => ({
+            ...prev,
+            content,
+        }));
+    };
+
+    useEffect(() => {
+        socket.connect();
+
+        socket.on("connect", () => {
+            console.log("Connected:", socket.id);
+
+            if (documentId) {
+                socket.emit("join-document", documentId);
+            }
+        });
+
+        return () => {
+            socket.off("connect");
+            socket.disconnect();
+        };
+    }, [documentId]);
+
+
+useEffect(() => {
+    socket.on("receive-document-change", handleDocumentChange);
+
+    return () => {
+        socket.off("receive-document-change", handleDocumentChange);
+    };
+}, []);
 
     useEffect(() => {
         const fetchDocument = async () => {
@@ -62,6 +100,7 @@ export default function DocumentPage() {
                         <DocumentEditor
                             document={document}
                             setDocument={setDocument}
+                             isRemoteUpdate={isRemoteUpdate}
                         />
                     </div>
                 </main>

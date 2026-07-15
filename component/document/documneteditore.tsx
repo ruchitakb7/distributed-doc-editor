@@ -4,10 +4,10 @@ import { useEffect, useRef } from "react";
 import { updateDocument } from "@/request/document";
 import { saveDocumentToIndexedDB } from "@/lib/indexedDB";
 import { useAuth } from "@/context/AuthContext";
+import socket from "@/lib/socket";
 
 const getUserFromCookie = () => {
     if (typeof document === "undefined") return null;
-
     const cookie = document.cookie
         .split("; ")
         .find((row) => row.startsWith("auth_user="));
@@ -24,15 +24,16 @@ const getUserFromCookie = () => {
 interface DocumentEditorProps {
     document: any;
     setDocument: React.Dispatch<React.SetStateAction<any>>;
+     isRemoteUpdate: React.MutableRefObject<boolean>;
 }
 
 export default function DocumentEditor({
     document,
-    setDocument
+    setDocument,
+     isRemoteUpdate,
 }: DocumentEditorProps) {
     const editorRef = useRef<HTMLDivElement>(null);
     const user = getUserFromCookie();
-
     const currentUser = getUserFromCookie();
 
     const collaborator = document?.collaborators?.find(
@@ -49,13 +50,50 @@ export default function DocumentEditor({
         const target = e.currentTarget;
         if (!target) return;
 
+         const content = e.currentTarget.innerHTML;
+
         const html = target.innerHTML ?? "";
 
         setDocument((prev: any) => ({
             ...(prev ?? {}),
             content: html,
         }));
+
+        console.log("Emitting:", content);
+
+        socket.emit("document-change", {
+            documentId: document._id,
+            content,
+        });
     };
+
+//     useEffect(() => {
+//     if (!editorRef.current) return;
+
+//     editorRef.current.innerHTML = document?.content || "";
+// }, [document?.content]);
+
+// useEffect(() => {
+//     if (!isRemoteUpdate.current) return;
+//     if (!editorRef.current) return;
+
+//     editorRef.current.innerHTML = document?.content || "";
+
+//     isRemoteUpdate.current = false;
+// }, [document?.content]);
+
+useEffect(() => {
+    console.log("Effect running");
+    console.log("isRemoteUpdate:", isRemoteUpdate.current);
+    console.log("document.content:", document?.content);
+
+    if (!isRemoteUpdate.current) return;
+    if (!editorRef.current) return;
+
+    editorRef.current.innerHTML = document?.content || "";
+
+    isRemoteUpdate.current = false;
+}, [document?.content]);
 
 
     useEffect(() => {
