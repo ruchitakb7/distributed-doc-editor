@@ -11,7 +11,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+      origin: [
+      "http://localhost:3000",
+      "https://distributed-doc-editor.vercel.app",
+    ],
     methods: ["GET", "POST"],
   },
 });
@@ -38,7 +41,7 @@ io.on("connection", (socket) => {
 
 });
 
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 server.listen(PORT, () => {
     console.log(`Socket Server running on port ${PORT}`);
