@@ -212,7 +212,7 @@ export default function DocumentEditor({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-[var(--hairline)] bg-[var(--surface-elevated)] px-6 py-3 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between border-t border-[var(--hairline)] bg-[var(--surface-elevated)] px-6 py-3 text-xs text-gray-600">
           <div className="flex items-center gap-4">
             <span>{stats.words} words</span>
             <span className="text-[var(--hairline)]">·</span>
