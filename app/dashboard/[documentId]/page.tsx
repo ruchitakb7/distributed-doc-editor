@@ -32,7 +32,7 @@ export default function DocumentPage() {
         socket.connect();
 
         socket.on("connect", () => {
-            console.log("Connected:", socket.id);
+           
 
             if (documentId) {
                 socket.emit("join-document", documentId);
@@ -58,7 +58,7 @@ useEffect(() => {
         const fetchDocument = async () => {
             try {
                 const response = await getDocumentById(documentId as string);
-                console.log(response, "response");
+               
 
                 if (response.success) {
                     setDocument(response.document);

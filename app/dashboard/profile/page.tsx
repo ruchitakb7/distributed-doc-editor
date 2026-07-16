@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function ProfilePage() {
   const { user } = useAuth();
-  console.log(user, 'nfjernfjrnefjk')
+  
 
   if (!user) {
     return (

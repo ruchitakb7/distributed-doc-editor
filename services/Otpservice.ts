@@ -70,7 +70,7 @@ export const verifyOtpService = async ({
     email: email.trim().toLowerCase(),
   });
 
-  console.log(user,'------------')
+ 
 
   if (!user) {
     return {
@@ -85,11 +85,6 @@ export const verifyOtpService = async ({
       message: "Invalid OTP.",
     };
   }
-
-  console.log("Stored expiry:", user.expiresAt
-);
-console.log("Current time:", new Date());
-console.log("Is expired:", user.expiresAt < new Date());
 
   if (!user.expiresAt || user.expiresAt < new Date()) {
     return {

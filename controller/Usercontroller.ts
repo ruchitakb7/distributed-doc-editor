@@ -65,7 +65,7 @@ export const sendOtpController = async (
   try {
     const { email, type } = await request.json();
 
-    console.log(email,'[[[[')
+  
 
     if (!email || !type) {
       return NextResponse.json(

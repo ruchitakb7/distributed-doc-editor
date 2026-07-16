@@ -38,7 +38,7 @@ export const createDocument = async ({
     owner,
   });
 
-  console.log(document);
+ 
 
   return document;
 };

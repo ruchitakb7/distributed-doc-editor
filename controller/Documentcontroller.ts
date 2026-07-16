@@ -15,7 +15,7 @@ export const create = async (request: Request) => {
 
     const user = await authenticateUser();
 
-    console.log("Authenticated user:", user);
+   
 
     if (!user) {
       return NextResponse.json(

@@ -6,7 +6,6 @@ export default async function DashboardPage() {
   const cookieStore = await cookies();
   const authToken =cookieStore.get("auth_token")?.value;
 
-    console.log(authToken,'authToken')
   if (!authToken) {
     redirect("/");
   }
