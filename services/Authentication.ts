@@ -6,6 +6,7 @@ interface TokenPayload extends JwtPayload {
   id: string;
 }
 
+
 export const authenticateUser = async () => {
   const cookieStore = await cookies();
 
@@ -34,3 +35,5 @@ export const authenticateUser = async () => {
 
   return user;
 };
+
+

@@ -1,6 +1,9 @@
 
-import { loginUser, registerUser } from "@/services/Userservice";
+import { loginUser, registerUser, resetPasswordService} from "@/services/Userservice";
 import { NextResponse } from "next/server";
+import { sendOtp } from "@/services/Userservice";
+import { verifyOtpService } from "@/services/Otpservice";
+
 
 const handleError = (error: unknown) => {
   return NextResponse.json(
@@ -54,3 +57,110 @@ export const login = async (request: Request) => {
 };
 
 
+
+
+export const sendOtpController = async (
+  request: Request
+) => {
+  try {
+    const { email, type } = await request.json();
+
+    console.log(email,'[[[[')
+
+    if (!email || !type) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Email and type are required.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const response = await sendOtp({
+      email,
+      type,
+    });
+
+    return NextResponse.json(response, {
+      status: 200,
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message,
+      },
+      {
+        status: error.status || 500,
+      }
+    );
+  }
+};
+
+
+
+
+export const verifyOtpController = async (request: Request) => {
+  try {
+    const body = await request.json();
+
+    const result = await verifyOtpService(body);
+
+    return NextResponse.json(result, {
+      status: result.success ? 200 : 400,
+    });
+  } catch (error) {
+    console.error("Verify OTP Error:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Internal server error.",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+};
+
+
+export const resetPasswordController = async (request: Request) => {
+  try {
+    const body = await request.json();
+
+    const { email, password } = body;
+
+    if (!email || !password) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Email and password are required.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const result = await resetPasswordService({
+      email,
+      password,
+    });
+
+    return NextResponse.json(result, {
+      status: result.success ? 200 : 400,
+    });
+  } catch (error) {
+    console.error("Reset Password Error:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Internal server error.",
+      },
+      { status: 500 }
+    );
+  }
+};

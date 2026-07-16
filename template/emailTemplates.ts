@@ -38,18 +38,25 @@ export const getEmailTemplate = ({
       return {
         subject: "Reset Your Password",
         html: `
-          <h2>Password Reset</h2>
+      <h2>Password Reset OTP</h2>
 
-          <p>Hello ${data.userName},</p>
+      <p>Hello ${data.userName},</p>
 
-          <p>Click the link below to reset your password.</p>
+      <p>We received a request to reset your password.</p>
 
-          <a href="${data.resetLink}">
-            Reset Password
-          </a>
-        `,
+      <p>Your OTP is:</p>
+
+      <h1 style="letter-spacing: 4px;">${data.otp}</h1>
+
+      <p>This OTP is valid for <strong>2 minutes</strong>.</p>
+
+      <p>If you didn't request this, you can safely ignore this email.</p>
+
+      <br/>
+
+      <p>Thank you.</p>
+    `,
       };
-
     default:
       throw new Error("Invalid email action.");
   }

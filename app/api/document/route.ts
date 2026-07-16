@@ -13,14 +13,14 @@ export async function GET(request: Request) {
 
 
 
-export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ documentId: string }> }
-) {
-  const { documentId } = await params;
+// export async function PUT(
+//   request: Request,
+//   { params }: { params: Promise<{ documentId: string }> }
+// ) {
+//   const { documentId } = await params;
 
-  return updateDocumentController(request, documentId);
-}
+//   return updateDocumentController(request, documentId);
+// }
 
 
 

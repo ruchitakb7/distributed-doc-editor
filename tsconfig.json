@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "component/document/mydocument"  ],
+, "component/document/mydocument", "app/auth/forgotPassword"  ],
   "exclude": ["node_modules"]
 }

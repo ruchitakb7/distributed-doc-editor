@@ -88,16 +88,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const token = getCookie("auth_token");
     const userCookie = getCookie("auth_user");
 
-    if (token && userCookie) {
+    if (userCookie) {
       try {
         const user = JSON.parse(userCookie) as User;
-        setAuthState({ user, token });
+        setAuthState({ user, token});
       } catch {
         deleteCookie("auth_user");
         deleteCookie("auth_token");
       }
     }
   }, []);
+
 
   const setAuthUser = (payload: { user: User; token: string | null }) => {
     setAuthState({ user: payload.user, token: payload.token });

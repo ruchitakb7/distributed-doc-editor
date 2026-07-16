@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { FileText, Menu } from "lucide-react";
+import { CircleUser, FileText, Menu } from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
 import { User } from "@/types/user.types";
+
 
 
 const NAV = [
@@ -42,9 +43,11 @@ function getUserFromCookie(): User | null {
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const { clearAuthUser } = useAuth();
+  const { clearAuthUser, user } = useAuth();
 
   const [cookieUser, setCookieUser] = useState<User | null>(null);
+
+ 
 
 
   useEffect(() => {
@@ -107,7 +110,7 @@ export default function Header() {
                 })}
               </nav>
 
-           
+
 
             </>
           )}
@@ -116,12 +119,22 @@ export default function Header() {
 
         <div className="flex items-center gap-3">
           {cookieUser ? (
-            <button
-              onClick={handleLogout}
-              className="rounded-full border border-[var(--hairline)] bg-background px-4 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-            >
-              Logout
-            </button>
+            <>
+
+              <button
+                onClick={() => router.push("/dashboard/profile")}
+                className="rounded-full border border-[var(--hairline)] bg-background p-2 text-foreground transition-colors hover:bg-accent"
+              >
+                <CircleUser className="h-5 w-5" />
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="rounded-full border border-[var(--hairline)] bg-background px-4 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+              >
+                Logout
+              </button>
+            </>
           ) : (
             pathname !== "/about" && (
               <Link
@@ -135,7 +148,7 @@ export default function Header() {
         </div>
       </div>
 
-      {cookieUser &&  (
+      {cookieUser && (
         <nav className="flex items-center gap-2 overflow-x-auto border-t border-[var(--hairline)] bg-background px-4 py-2 md:hidden">
           {NAV.map((item) => {
             const isActive =
@@ -146,10 +159,10 @@ export default function Header() {
               <Link
                 key={item.label}
                 href={item.href}
-               
+
                 className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ${isActive
-                    ? "bg-accent text-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                  ? "bg-accent text-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
                   }`}
               >
                 {item.label}

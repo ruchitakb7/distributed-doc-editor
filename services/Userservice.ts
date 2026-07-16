@@ -4,6 +4,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
+import { sendOtpService } from "./Otpservice";
+import { EMAIL_ACTION } from "@/constant/emailAction";
 
 interface RegisterUserData {
   name: string;
@@ -12,6 +14,16 @@ interface RegisterUserData {
 }
 
 interface LoginUserData {
+  email: string;
+  password: string;
+}
+
+interface SendOtpParams {
+  email: string;
+  type: "forgot-password";
+}
+
+interface ResetPasswordPayload {
   email: string;
   password: string;
 }
@@ -105,5 +117,65 @@ export const loginUser = async ({ email, password }: LoginUserData) => {
       name: user.name,
       email: user.email,
     },
+  };
+};
+
+
+
+export const sendOtp = async ({
+  email,
+  type,
+}: SendOtpParams) => {
+  const user = await User.findOne({
+    email: email.trim()
+  });
+
+  if (!user) {
+    throw {
+      status: 404,
+      message: "No user found with this email.",
+    };
+  }
+
+  await sendOtpService({
+    email: user.email,
+    userName: user.name,
+    type,
+    action: EMAIL_ACTION.FORGOT_PASSWORD,
+  });
+
+  return {
+    success: true,
+    message: "OTP sent successfully.",
+  };
+};
+
+
+
+
+export const resetPasswordService = async ({
+  email,
+  password,
+}: ResetPasswordPayload) => {
+  const user = await User.findOne({
+    email: email.trim().toLowerCase(),
+  });
+
+  if (!user) {
+    return {
+      success: false,
+      message: "No user found with this email.",
+    };
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  user.password = hashedPassword;
+
+  await user.save();
+
+  return {
+    success: true,
+    message: "Password reset successfully.",
   };
 };
