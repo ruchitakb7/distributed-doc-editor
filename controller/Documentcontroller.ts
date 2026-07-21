@@ -52,7 +52,7 @@ export const create = async (request: Request) => {
   }
 };
 
-export const getByOwner = async (request: Request) => {
+export const getByOwner = async (request: Request,page:number,limit:number,search:string) => {
   try {
     if (request.method !== "GET") {
       return NextResponse.json(
@@ -62,7 +62,6 @@ export const getByOwner = async (request: Request) => {
     }
 
     const user = await authenticateUser();
-    console.log(user,'jfjkdf')
 
     if (!user) {
       return NextResponse.json(
@@ -74,7 +73,7 @@ export const getByOwner = async (request: Request) => {
       );
     }
 
-    const documents = await getDocumentsByOwner(user.id);
+    const documents = await getDocumentsByOwner(user.id,page,limit,search);
 
     return NextResponse.json(
       {
@@ -241,11 +240,11 @@ export const shareDocumentController = async (req: Request) => {
 };
 
 
-export const getSharedDocumentsController = async (
+export const getSharedDocumentsController = async (request:Request,page:number,limit:number,search:string
 
 ) => {
   try {
-    const documents = await getSharedDocuments();
+    const documents = await getSharedDocuments(page,limit,search);
 
     return NextResponse.json(
       {
@@ -310,9 +309,9 @@ export const toggleDocumentTrashController = async (
 
 
 
-export const getTrashedDocumentsController = async () => {
+export const getTrashedDocumentsController = async (request:Request,page:number,limit:number,search:string) => {
   try {
-    const documents = await getTrashedDocumentsService();
+    const documents = await getTrashedDocumentsService(page,limit,search);
 
     return NextResponse.json(
       {

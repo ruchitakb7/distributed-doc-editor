@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSharedDocuments} from "@/request/document";
-import Sidebar from "@/component/dashboard/Sidebar";
+import Spinner from "@/component/ui/Spinner";
+import { Search, X } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Document {
   _id: string;
@@ -19,16 +21,34 @@ export default function MyDocumentsPage() {
 
   const router = useRouter();
 
+    const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const limit=6
+
   useEffect(() => {
     fetchDocuments();
-  }, []);
+  }, [currentPage,debouncedSearch]);
+
+    useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search, debouncedSearch]);
+
 
   const fetchDocuments = async () => {
     try {
-      const data = await getSharedDocuments();
+      const data = await getSharedDocuments(currentPage, limit, search);
 
       if (data.success) {
-        setDocuments(data.documents);
+        // setDocuments(data.documents);
+         setDocuments(data.documents.documents);
+        setTotalPages(data.documents.totalPages);
       }
     } catch (error) {
       console.error(error);
@@ -39,9 +59,9 @@ export default function MyDocumentsPage() {
 
   if (loading) {
     return (
-      <div className="p-8">
-        <h2 className="text-xl font-semibold">Loading documents...</h2>
-      </div>
+      <div className="flex items-center justify-center h-[calc(100vh-64px)]">
+                       <Spinner></Spinner>
+                  </div>
     );
   }
 
@@ -58,6 +78,40 @@ export default function MyDocumentsPage() {
           Documents shared with you by collaborators.
         </p>
       </div>
+
+       <div className="mb-8">
+          <div className="relative w-full sm:w-96">
+            <Search
+              size={18}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+            />
+
+            <input
+              type="text"
+              placeholder="Search documents..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="
+        w-full
+        rounded-xl
+        text-gray-800
+        border border-gray-300
+        bg-white
+        py-3
+        pl-11
+        pr-10
+        text-sm
+        placeholder:text-gray-400
+        shadow-sm
+        transition-all
+        outline-none
+        focus:border-black
+        focus:ring-2
+        focus:ring-gray-200
+      "
+            />
+          </div>
+        </div>
 
       {documents.length === 0 ? (
         <div className="h-[250px] border-2 border-dashed rounded-xl flex items-center justify-center bg-white text-gray-400">
@@ -129,6 +183,42 @@ export default function MyDocumentsPage() {
         </div>
       )}
     </main>
+
+     {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-6 mt-12">
+          <button
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            disabled={currentPage === 1}
+            className="text-gray-500 hover:text-black disabled:opacity-30 transition"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => {
+            const page = index + 1;
+
+            return (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`text-lg transition ${currentPage === page
+                  ? "font-bold text-black"
+                  : "text-gray-400 hover:text-black"
+                  }`}
+              >
+                {page}
+              </button>
+            );
+          })}
+
+          <button
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            disabled={currentPage === totalPages}
+            className="text-gray-500 hover:text-black disabled:opacity-30 transition"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+      )}
   </div>
 
   );

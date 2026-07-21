@@ -18,7 +18,7 @@ export default function QuickActions() {
 
   return (
     <section className="mb-10 rounded-xl border border-gray-200 bg-white p-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-serif text-[#222]">
             Quick Actions

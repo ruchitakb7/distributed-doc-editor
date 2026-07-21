@@ -167,7 +167,7 @@ export default function DocumentEditor({
   }, [doc.content, doc._id]);
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
+    <div className="mx-auto max-w-5xl px-2 py-6">
       <div className="overflow-hidden rounded-2xl border border-[var(--hairline)] bg-[var(--surface-elevated)] shadow-[var(--shadow-card)]">
         {/* Toolbar */}
         <div className="flex flex-wrap items-center gap-1 border-b border-[var(--hairline)] bg-[var(--surface)] px-3 py-2">

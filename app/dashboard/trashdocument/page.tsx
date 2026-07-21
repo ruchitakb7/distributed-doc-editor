@@ -3,9 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getTrashedDocuments, permanentlyDeleteDocument, deleteDocument } from "@/request/document";
-import { Alert } from "@/component/ui/alert";
 import ConfirmationModal from "@/component/ui/confirmationModel";
 import { RotateCcw, Trash2 } from "lucide-react";
+import Spinner from "@/component/ui/Spinner";
+import { Search, X } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Toast } from "@/component/ui/Toast";
 
 interface Document {
     _id: string;
@@ -22,6 +25,17 @@ export default function MyDocumentsPage() {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedDocumentId, setSelectedDocumentId] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const limit = 6
+
+    const [toast, setToast] = useState({
+        open: false,
+        variant: "info" as "success" | "error" | "info",
+        message: "",
+    });
 
     const [alert, setAlert] = useState<{
         show: boolean;
@@ -37,14 +51,25 @@ export default function MyDocumentsPage() {
 
     useEffect(() => {
         fetchDocuments();
-    }, []);
+    }, [currentPage, debouncedSearch]);
+
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+            setCurrentPage(1);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [search, debouncedSearch]);
 
     const fetchDocuments = async () => {
         try {
-            const data = await getTrashedDocuments();
+            const data = await getTrashedDocuments(currentPage, limit, search);
 
             if (data.success) {
-                setDocuments(data.documents);
+                setDocuments(data.documents.documents);
+                setTotalPages(data.documents.totalPages);
             }
         } catch (error) {
             console.error(error);
@@ -55,8 +80,8 @@ export default function MyDocumentsPage() {
 
     if (loading) {
         return (
-            <div className="p-8">
-                <h2 className="text-xl font-semibold">Loading documents...</h2>
+            <div className="flex items-center justify-center h-[calc(100vh-64px)]">
+                <Spinner></Spinner>
             </div>
         );
     }
@@ -65,8 +90,8 @@ export default function MyDocumentsPage() {
         try {
             const data = await permanentlyDeleteDocument(documentId);
 
-            setAlert({
-                show: true,
+            setToast({
+                open: true,
                 variant: "success",
                 message: data.message,
             });
@@ -75,19 +100,13 @@ export default function MyDocumentsPage() {
                 prev.filter((doc) => doc._id !== documentId)
             );
 
-            setTimeout(() => {
-                setAlert((prev) => ({ ...prev, show: false }));
-            }, 3000);
+
         } catch (error: any) {
-            setAlert({
-                show: true,
+            setToast({
+                open: true,
                 variant: "error",
                 message: error.message || "Failed to delete document.",
             });
-
-            setTimeout(() => {
-                setAlert((prev) => ({ ...prev, show: false }));
-            }, 3000);
         }
     };
 
@@ -95,29 +114,22 @@ export default function MyDocumentsPage() {
         try {
             const data = await deleteDocument(documentId);
 
-            setAlert({
-                show: true,
+           setToast({
+                open: true,
                 variant: "success",
                 message: data.message,
             });
-
             setDocuments((prev) =>
                 prev.filter((doc) => doc._id !== documentId)
             );
 
-            setTimeout(() => {
-                setAlert((prev) => ({ ...prev, show: false }));
-            }, 3000);
+           
         } catch (error: any) {
-            setAlert({
-                show: true,
+           setToast({
+                open: true,
                 variant: "error",
-                message: error.message || "Failed to restore document.",
+                message: error.message || "Failed to delete document.",
             });
-
-            setTimeout(() => {
-                setAlert((prev) => ({ ...prev, show: false }));
-            }, 3000);
         }
     };
 
@@ -132,8 +144,42 @@ export default function MyDocumentsPage() {
                         </h1>
 
                         <p className="text-gray-500 mt-2">
-                            Manage and curate your professional archive.
+                            Manage your deleted documents.
                         </p>
+                    </div>
+                </div>
+
+                <div className="mb-8">
+                    <div className="relative w-full sm:w-96">
+                        <Search
+                            size={18}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                        />
+
+                        <input
+                            type="text"
+                            placeholder="Search documents..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="
+                        w-full
+                        rounded-xl
+                        text-gray-800
+                        border border-gray-300
+                        bg-white
+                        py-3
+                        pl-11
+                        pr-10
+                        text-sm
+                        placeholder:text-gray-400
+                        shadow-sm
+                        transition-all
+                        outline-none
+                        focus:border-black
+                        focus:ring-2
+                        focus:ring-gray-200
+                      "
+                        />
                     </div>
                 </div>
 
@@ -205,7 +251,7 @@ export default function MyDocumentsPage() {
                                             }}
                                             className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
                                         >
-                                               <RotateCcw className="h-5 w-5" />
+                                            <RotateCcw className="h-5 w-5" />
                                         </button>
 
                                         <button
@@ -225,14 +271,17 @@ export default function MyDocumentsPage() {
                     </div>
                 )}
             </main>
-            {alert.show && (
-                <div className="max-w-7xl mx-auto px-8 pt-6">
-                    <Alert
-                        variant={alert.variant}
-                        message={alert.message}
-                    />
-                </div>
-            )}
+            <Toast
+                open={toast.open}
+                variant={toast.variant}
+                message={toast.message}
+                onClose={() =>
+                    setToast((prev) => ({
+                        ...prev,
+                        open: false,
+                    }))
+                }
+            />
 
             <ConfirmationModal
                 open={deleteModalOpen}
@@ -245,6 +294,42 @@ export default function MyDocumentsPage() {
                     await handleDelete(selectedDocumentId);
                 }}
             />
+
+            {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-6 mt-12">
+                    <button
+                        onClick={() => setCurrentPage((prev) => prev - 1)}
+                        disabled={currentPage === 1}
+                        className="text-gray-500 hover:text-black disabled:opacity-30 transition"
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                    {Array.from({ length: totalPages }, (_, index) => {
+                        const page = index + 1;
+
+                        return (
+                            <button
+                                key={page}
+                                onClick={() => setCurrentPage(page)}
+                                className={`text-lg transition ${currentPage === page
+                                    ? "font-bold text-black"
+                                    : "text-gray-400 hover:text-black"
+                                    }`}
+                            >
+                                {page}
+                            </button>
+                        );
+                    })}
+
+                    <button
+                        onClick={() => setCurrentPage((prev) => prev + 1)}
+                        disabled={currentPage === totalPages}
+                        className="text-gray-500 hover:text-black disabled:opacity-30 transition"
+                    >
+                        <ChevronRight size={20} />
+                    </button>
+                </div>
+            )}
         </div>
     );
 

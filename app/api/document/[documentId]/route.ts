@@ -1,7 +1,6 @@
 import { getDocumentByIdController, updateDocumentController } from "@/controller/Documentcontroller";
 
 import connectDB from "@/lib/mongodb";
-import { NextRequest } from "next/dist/server/web/spec-extension/request";
 
 export async function GET(
   request: Request,

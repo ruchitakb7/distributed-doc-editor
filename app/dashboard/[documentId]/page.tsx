@@ -10,6 +10,7 @@ import DocumentHeader from "@/component/document/documentheader";
 import DocumentEditor from "@/component/document/documneteditore";
 import { getDocumentById } from "@/request/document";
 import socket from "@/lib/socket";
+import Spinner from "@/component/ui/Spinner";
 
 export default function DocumentPage() {
     const { documentId } = useParams();
@@ -78,8 +79,9 @@ useEffect(() => {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-[calc(100vh-64px)]">
-                Loading...
+                 <Spinner></Spinner>
             </div>
+           
         );
     }
 

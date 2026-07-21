@@ -38,22 +38,47 @@ export const createDocument = async ({
     owner,
   });
 
- 
-
   return document;
 };
 
 
-
 export const getDocumentsByOwner = async (
-  owner: string
+  owner: string,
+  page: number,
+  limit: number,
+  search: string
 ) => {
-  const documents = await DocumentModel.find({
+  const skip = (page - 1) * limit;
+
+
+  const query: any = {
     owner,
     isDeleted: false,
-  }).sort({ createdAt: -1 });
+  };
 
-  return documents;
+  if (search.trim()) {
+    query.title = {
+      $regex: search,
+      $options: "i",
+    };
+  }
+
+  const totalDocuments = await DocumentModel.countDocuments({
+    owner,
+    isDeleted: false,
+  });
+
+  const documents = await DocumentModel.find(query)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  return {
+    documents,
+    currentPage: page,
+    totalPages: Math.ceil(totalDocuments / limit),
+    totalDocuments,
+  };
 };
 
 
@@ -198,17 +223,41 @@ export const shareDocumentService = async ({
 
 
 
-export const getSharedDocuments = async () => {
+export const getSharedDocuments = async (page: number,
+  limit: number,
+  search: string) => {
   const user = await authenticateUser();
 
-  const documents = await DocumentModel.find({
+  const skip = (page - 1) * limit;
+
+
+  const query: any = {
     "collaborators.user": user._id,
     isDeleted: false,
-  })
-    .populate("owner", "name email")
-    .sort({ updatedAt: -1 });
+  };
 
-  return documents;
+  if (search.trim()) {
+    query.title = {
+      $regex: search,
+      $options: "i",
+    };
+  }
+
+
+  const documents = await DocumentModel.find(query)
+    .populate("owner", "name email")
+    .sort({ updatedAt: -1 })
+    .skip(skip)
+    .limit(limit)
+
+  const totalDocuments = await DocumentModel.countDocuments(query)
+
+  return {
+    documents,
+    currentPage: page,
+    totalPages: Math.ceil(totalDocuments / limit),
+    totalDocuments,
+  };
 };
 
 export const toggleDocumentTrashStatus = async (
@@ -234,17 +283,39 @@ export const toggleDocumentTrashStatus = async (
 };
 
 
-export const getTrashedDocumentsService = async () => {
+export const getTrashedDocumentsService = async (page: number, limit: number, search: string) => {
+
   const user = await authenticateUser();
 
-  const documents = await DocumentModel.find({
+  const skip = (page - 1) * limit
+
+  const query: any = {
     owner: user._id,
     isDeleted: true,
-  })
+  }
+
+  if (search.trim()) {
+    query.title = {
+      $regex: search,
+      $options: "i",
+    };
+  }
+
+  const documents = await DocumentModel.find(query)
     .sort({ updatedAt: -1 })
+    .skip(skip)
+    .limit(limit)
     .lean();
 
-  return documents;
+  const totalDocuments = await DocumentModel.countDocuments(query)
+
+  return {
+    documents: documents,
+    currentPage: page,
+    totalPages: Math.ceil(totalDocuments / limit),
+    totalDocuments,
+
+  };
 };
 
 export const permanentlyDeleteDocumentService = async (

@@ -16,8 +16,8 @@ export const createDocument = async () => {
   return data;
 };
 
-export const fetchDocumentsByOwner = async () => {
-  const response = await fetch("/api/document", {
+export const fetchDocumentsByOwner = async (page:number,limit:number) => {
+  const response = await fetch(`/api/document/my?page=${page}&limit=${limit}`, {
     method: "GET",
   });
 
@@ -31,9 +31,10 @@ export const fetchDocumentsByOwner = async () => {
 };
 
 
-export const getMyDocuments = async () => {
+export const getMyDocuments = async (  page: number,
+  limit: number,search:string) => {
   try {
-    const response = await fetch("/api/document", {
+    const response = await fetch(`/api/document?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`, {
       method: "GET",
       credentials: "include",
     });
@@ -132,9 +133,9 @@ export const shareDocument = async ({
 };
 
 
-export const getSharedDocuments = async () => {
+export const getSharedDocuments = async (page:number,limit:number,search:string) => {
   try {
-    const response = await fetch("/api/document/share", {
+    const response = await fetch(`/api/document/share?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`, {
       method: "GET",
       credentials: "include",
     });
@@ -167,9 +168,9 @@ export const deleteDocument = async (documentId: string) => {
 };
 
 
-export const getTrashedDocuments = async () => {
+export const getTrashedDocuments = async (page:number,limit:number,search:string) => {
   try {
-    const response = await fetch("/api/document/trash", {
+    const response = await fetch(`/api/document/trash?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`, {
       method: "GET",
       credentials: "include",
     });

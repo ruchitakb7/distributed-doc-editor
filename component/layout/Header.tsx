@@ -47,9 +47,6 @@ export default function Header() {
 
   const [cookieUser, setCookieUser] = useState<User | null>(null);
 
- 
-
-
   useEffect(() => {
     setCookieUser(getUserFromCookie());
   }, [pathname]);
@@ -70,9 +67,9 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--hairline)] bg-[color-mix(in_oklab,var(--surface-elevated)_85%,transparent)] backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-4 lg:px-6">
 
-        <div className="flex items-center gap-10">
+        <div className="flex min-w-0 flex-1 items-center gap-4 px-3 sm:px-4 lg:gap-8">
           <Link
             href={cookieUser ? "/dashboard" : "/"}
             className="flex items-center gap-2.5"
@@ -81,26 +78,26 @@ export default function Header() {
               <FileText className="h-4 w-4" strokeWidth={2} />
             </span>
 
-            <span className="font-serif text-2xl leading-none text-foreground">
+            <span className="whitespace-nowrap font-serif text-xl lg:text-2xl leading-none text-foreground">
               LiveDocs
             </span>
           </Link>
 
           {cookieUser && (
             <>
-              <nav className="hidden items-center gap-1 md:flex">
+              <nav className=" hidden items-center gap-1 lg:flex">
                 {NAV.map((item) => {
                   const isActive =
-                    pathname === item.href ||
-                    (item.href !== "/about" &&
-                      pathname.startsWith(item.href));
+                    item.href === "/dashboard" ?
+                      pathname === "/dashboard" :
+                      pathname.startsWith(item.href)
 
                   return (
                     <Link
                       key={item.label}
                       href={item.href}
                       className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${isActive
-                        ? "bg-accent text-foreground"
+                        ? "text-blue-500 bg-accent "
                         : "text-muted-foreground hover:bg-accent hover:text-foreground"
                         }`}
                     >
@@ -117,7 +114,7 @@ export default function Header() {
         </div>
 
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2">
           {cookieUser ? (
             <>
 
@@ -130,9 +127,10 @@ export default function Header() {
 
               <button
                 onClick={handleLogout}
-                className="rounded-full border border-[var(--hairline)] bg-background px-4 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+                className="rounded-full border border-[var(--hairline)] bg-background px-3 py-1.5 text-sm font-medium hover:bg-accent"
               >
-                Logout
+                <span className="hidden sm:inline">Logout</span>
+                <span className="sm:hidden">↩</span>
               </button>
             </>
           ) : (
@@ -152,8 +150,9 @@ export default function Header() {
         <nav className="flex items-center gap-2 overflow-x-auto border-t border-[var(--hairline)] bg-background px-4 py-2 md:hidden">
           {NAV.map((item) => {
             const isActive =
-              pathname === item.href ||
-              (item.href !== "/about" && pathname.startsWith(item.href));
+              item.href === "/dashboard" ?
+                pathname === "/dashboard" :
+                pathname.startsWith(item.href)
 
             return (
               <Link
@@ -161,7 +160,7 @@ export default function Header() {
                 href={item.href}
 
                 className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ${isActive
-                  ? "bg-accent text-foreground"
+                  ? "bg-accent text-blue-600"
                   : "text-muted-foreground hover:bg-accent hover:text-foreground"
                   }`}
               >
